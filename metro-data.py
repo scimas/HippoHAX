@@ -67,15 +67,15 @@ blue_stations = get_stations('BL')
 yellow_stations = pd.DataFrame(yellow_stations['Stations'])
 blue_stations = pd.DataFrame(blue_stations['Stations'])
 
-# st_of_interest = {
-#    'YL': ['Braddock Road', 'King St-Old Town', 'Eisenhower Avenue', 'Huntington', 'Ronald Reagan Washington National Airport', 'Crystal City', 'Pentagon City', 'Pentagon', 'L\'Enfant Plaza'],
-#    'BL': ['Braddock Road', 'King St-Old Town', 'Van Dorn Street', 'Franconia-Springfield', 'Ronald Reagan Washington National Airport', 'Crystal City', 'Pentagon City', 'Pentagon', 'Arlington Cemetery', 'Rosslyn', 'L\'Enfant Plaza']
-# }
-
 st_of_interest = {
-    'YL': ['Braddock Road', 'King St-Old Town', 'Eisenhower Avenue', 'Huntington'],
-    'BL': ['Braddock Road', 'King St-Old Town', 'Van Dorn Street', 'Franconia-Springfield']
+   'YL': ['Braddock Road', 'King St-Old Town', 'Eisenhower Avenue', 'Huntington', 'Ronald Reagan Washington National Airport', 'Crystal City', 'Pentagon City', 'Pentagon', 'L\'Enfant Plaza'],
+   'BL': ['Braddock Road', 'King St-Old Town', 'Van Dorn Street', 'Franconia-Springfield', 'Ronald Reagan Washington National Airport', 'Crystal City', 'Pentagon City', 'Pentagon', 'Arlington Cemetery', 'Rosslyn', 'L\'Enfant Plaza']
 }
+
+# st_of_interest = {
+#     'YL': ['Braddock Road', 'King St-Old Town', 'Eisenhower Avenue', 'Huntington'],
+#     'BL': ['Braddock Road', 'King St-Old Town', 'Van Dorn Street', 'Franconia-Springfield']
+# }
 
 stations = yellow_stations[yellow_stations['Name'].isin(st_of_interest['YL'])][['Name', 'Code', 'Lat', 'Lon']]
 stations = stations.append(blue_stations[blue_stations['Name'].isin(st_of_interest['BL'])][['Name', 'Code', 'Lat', 'Lon']], ignore_index=True)
@@ -86,19 +86,21 @@ stations.to_csv('data/metro_stations.csv')
 
 stops = []
 for station in stations.itertuples():
-    stops.extend(get_bus_stops(
-        getattr(station, 'Lat'),
-        getattr(station, 'Lon'),
-        100
-    )['Stops'])
+    for stop in get_bus_stops(
+            getattr(station, 'Lat'),
+            getattr(station, 'Lon'),
+            100
+            )['Stops']:
+        stops.append(stop)
+        stops[-1]['Nearest_Metro'] = getattr(station, 'Index')
 
 stops = pd.DataFrame(stops)
 stops2 = stops.drop(columns='Routes')
 
-stops.to_csv('data/bus_stops.csv', index=False)
+stops2.to_csv('data/bus_stops.csv', index=False)
 
 routes = []
-for i in stops2['Routes']:
+for i in stops['Routes']:
     routes.extend(i)
 routes = list(pd.Series(routes).unique())
 
