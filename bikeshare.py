@@ -14,11 +14,9 @@ df_metro_loc = pd.read_csv(metro_loc)
 
 def get_coord(address):
     coords = df_bike_loc[df_bike_loc['ADDRESS'].str.match(address)]
-    print(coords)
     lat = coords.iloc[0]["LATITUDE"]
     long = coords.iloc[0]["LONGITUDE"]
     result = [lat, long]
-    print(result)
     return result
 
 
@@ -32,18 +30,19 @@ def compare_points():
             try:
                 miles = vincenty(bike, metro).miles
                 print(miles)
-                if miles < 1.0:
+                if miles < 3.0:
                     in_range.append(True)
                 else:
                     in_range.append(False)
             except ValueError as e:
                 print("Unforomatted Data")
                 in_range.append(False)
-    print(in_range)
     length = len(df_bike_loc)
     df_bike_loc["IN_RANGE"] = in_range[:length]
-    print(df_bike_loc)
-    print(df_bike_loc.groupby(["IN_RANGE"]).sum())
+    filtered_bike_loc = df_bike_loc[df_bike_loc["IN_RANGE"] == True]
+    print(filtered_bike_loc)
+    filtered_bike_loc.to_csv("Filtered_Bike_Data.csv")
+
 
 compare_points()
 # get_coord("New Hampshire Ave & T St NW")
