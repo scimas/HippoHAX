@@ -31,7 +31,8 @@ def compare_points():
                 miles = vincenty(bike, metro).miles
                 print(miles)
                 if miles < 3.0:
-                    in_range.append(True)
+                    print(srow["Name"])
+                    in_range.append(srow["Name"])
                 else:
                     in_range.append(False)
             except ValueError as e:
@@ -39,7 +40,7 @@ def compare_points():
                 in_range.append(False)
     length = len(df_bike_loc)
     df_bike_loc["IN_RANGE"] = in_range[:length]
-    filtered_bike_loc = df_bike_loc[df_bike_loc["IN_RANGE"] == True]
+    filtered_bike_loc = df_bike_loc[df_bike_loc["IN_RANGE"] != False]
     print(filtered_bike_loc)
     filtered_bike_loc.to_csv("Filtered_Bike_Data.csv")
 
