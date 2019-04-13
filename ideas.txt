@@ -1,0 +1,6 @@
+1.  Metro high traffic events
+2.a price/time transit aggregate
+2.b forecasting prices
+2.c pricing/income transit brackets
+3.  people avoiding fairs
+4.  impact on Blue/Yellow Lines shutdown
